@@ -120,6 +120,8 @@ public class SessionHandler {
             connection.close();
         }catch (Exception e){
             e.printStackTrace();
+//
+
         }finally {
             connection.close();
         }

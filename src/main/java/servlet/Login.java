@@ -35,6 +35,8 @@ public class Login extends HttpServlet {
             SessionHandler.saveSession(session);
         }catch (Exception e){
             e.printStackTrace();
+//
+//
         }
         resp.sendRedirect("loginSuccess.jsp");
     }
