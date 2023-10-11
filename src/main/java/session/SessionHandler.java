@@ -3,10 +3,7 @@ package session;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.sql.*;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -69,26 +66,40 @@ public class SessionHandler {
     }
     private static void byteValuestoSession(HttpSession session, byte[] data){
        try{
-//           ObjectInputStream objectInput=new ObjectInputStream()
+           ObjectInputStream objectInput=new ObjectInputStream(new ByteArrayInputStream(data));
+           Map <String, Object> deserializedAttributes= (Map <String, Object>) objectInput.readObject();
+           for(Map.Entry<String,Object> entry: deserializedAttributes.entrySet()){
+               session.setAttribute(entry.getKey(), entry.getValue());
+           }
        }catch (Exception e){
            e.printStackTrace();
        }
     }
     public static HttpSession getSession(HttpServletRequest request) throws Exception{
         String sessionId= request.getSession().getId();
+        HttpSession session= request.getSession();
         Connection connection=null;
         try {
             connection=getConnection();
             PreparedStatement statement= connection.prepareStatement(
+                    "update session_data set last_accessed_time=? where session_id=?"
+            );
+            statement.setTimestamp(1,new Timestamp(session.getLastAccessedTime()));
+            statement.setString(2,sessionId);
+            statement.executeUpdate();
+            statement= connection.prepareStatement(
                     "select session_data from session_data where session_id=?"
             );
             statement.setString(1,sessionId);
             ResultSet rs= statement.executeQuery();
             if (rs.next()){
-
+                byte[] datas= rs.getBytes("session_data");
+                byteValuestoSession(session,datas);
+                return session;
             }
+            connection.close();
         }catch (Exception e){
-
+            e.printStackTrace();
         }finally {
             connection.close();
         }
@@ -99,13 +110,18 @@ public class SessionHandler {
         Connection connection=null;
         try {
             connection=getConnection();
+            System.out.println("Delete: "+session.getId());
             PreparedStatement statement= connection.prepareStatement(
                     "DELETE from session_data where session_id=?"
             );
             statement.setString(1,session.getId());
+            System.out.println(statement);
+            statement.executeUpdate();
             connection.close();
         }catch (Exception e){
             e.printStackTrace();
+//
+
         }finally {
             connection.close();
         }
