@@ -8,18 +8,32 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="session.SessionHandler" %>
 <%@ page import="java.sql.Timestamp" %>
+<%@ page import="java.util.HashMap" %>
 <html>
 <head>
     <title>Home</title>
 </head>
 <body>
 <%
-    HttpSession session1= SessionHandler.getSession(request);
+    SessionHandler sessionHandler=new SessionHandler(request, response);
+    HashMap<String,Object> sessionData=sessionHandler.getSession();
 %>
     <h1>Login Success</h1>
-    <br>
-    <p>User: <%=session1.getAttribute("user")%></p>
-    <p>Last access: <%=new Timestamp(session1.getLastAccessedTime())%></p>
+<%
+    if(sessionData!=null) {
+        for (HashMap.Entry<String, Object> entry : sessionData.entrySet()) {
+%>
+    <p><%=entry.getKey()+": "+entry.getValue()%></p>
+<%
+    }
+%>
     <a href="LogoutServlet">Logout</a>
+<%
+    } else {
+%>
+Session expirée, <a href="login.jsp">Veuillez vous reconnectez</a>
+<%
+    }
+%>
 </body>
 </html>

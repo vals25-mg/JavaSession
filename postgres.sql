@@ -7,3 +7,6 @@ CREATE TABLE session_data (
       creation_time TIMESTAMP,
       last_accessed_time TIMESTAMP
 );
+
+alter table session_data
+    add column ipaddress varchar(15);
