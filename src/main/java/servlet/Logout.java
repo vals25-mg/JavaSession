@@ -15,16 +15,13 @@ import java.sql.SQLException;
 public class Logout extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session= req.getSession(false);
-        if (session!=null){
+            SessionHandler sessionHandler=new SessionHandler(req,resp);
             try {
-                SessionHandler.removeSession(session);
+                sessionHandler.removeSession();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            session.invalidate();
-        }
-        resp.sendRedirect("index.jsp");
+            resp.sendRedirect("index.jsp");
     }
 
     @Override

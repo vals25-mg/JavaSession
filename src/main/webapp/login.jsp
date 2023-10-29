@@ -8,13 +8,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Login</title>
+    <title>Login Vals</title>
 </head>
 <body style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f0f0;">
     <div style="border: 1px solid #333; padding: 20px; background-color: #fff;">
         <h1>Login</h1>
         <form action="LoginServlet" method="post" style="text-align: center;">
-
             Username: <input type="text" name="user" style="margin: 10px;">
             <br>
             Password: <input type="password" name="password" style="margin: 10px;">

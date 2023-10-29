@@ -9,6 +9,9 @@ import jakarta.servlet.http.HttpSession;
 import session.SessionHandler;
 
 import java.io.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,22 +25,18 @@ public class Login extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        SessionHandler sessionHandler=new SessionHandler(req,resp);
         String user= req.getParameter("user");
         String password=req.getParameter("password");
-        HttpSession session= req.getSession();
-        session.setAttribute("user",user);
-        session.setAttribute("password",password);
         System.out.println("User: "+user+" / Password: "+password);
-        System.out.println("Session id: "+session.getId());
-        System.out.println("Creation time: "+session.getCreationTime());
-        System.out.println("Last access time: "+session.getLastAccessedTime());
+//        System.out.println("Creation time: "+session.getCreationTime());
+//        System.out.println("Last access time: "+session.getLastAccessedTime());
         try {
-            SessionHandler.saveSession(session);
+            sessionHandler.sessionStart(req,resp);
+            resp.sendRedirect("loginSuccess.jsp");
         }catch (Exception e){
-            e.printStackTrace();
-//
-//
+            PrintWriter out =resp.getWriter();
+            out.print(e.getMessage());
         }
-        resp.sendRedirect("loginSuccess.jsp");
     }
 }
