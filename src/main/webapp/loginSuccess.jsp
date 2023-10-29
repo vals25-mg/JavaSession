@@ -9,6 +9,8 @@
 <%@ page import="session.SessionHandler" %>
 <%@ page import="java.sql.Timestamp" %>
 <%@ page import="java.util.HashMap" %>
+<%@ page import="java.net.InetAddress" %>
+<%@ page import="java.util.Enumeration" %>
 <html>
 <head>
     <title>Home</title>
@@ -17,6 +19,12 @@
 <%
     SessionHandler sessionHandler=new SessionHandler(request, response);
     HashMap<String,Object> sessionData=sessionHandler.getSession();
+    Enumeration<String> headerNames = request.getHeaderNames();
+    while (headerNames.hasMoreElements()) {
+        String headerName = headerNames.nextElement();
+        String headerValue = request.getHeader(headerName);
+        System.out.println(headerName + ": " + headerValue);
+    }
 %>
     <h1>Login Success</h1>
 <%
@@ -27,6 +35,9 @@
 <%
     }
 %>
+    <p><%=sessionHandler.getIpAddress()%></p>
+<p><%=System.getProperty("java.rmi.server.hostname")%></p>
+<p><%=request.getHeader("X-FORWARDED-FOR")%></p>
     <a href="LogoutServlet">Logout</a>
 <%
     } else {

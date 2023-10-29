@@ -98,7 +98,7 @@ public class SessionHandler {
        }
        return deserializedAttributes;
     }
-    protected String getIpAddress() throws IOException {
+    public String getIpAddress() throws IOException {
         String ip=null;
         Socket socket = new Socket();
         socket.connect(new InetSocketAddress("google.com", 80));
@@ -118,8 +118,9 @@ public class SessionHandler {
                 selectExpired.setString(1, getSessionId());
                 selectExpired.setString(2, getIpAddress());
                 ResultSet resultSet = selectExpired.executeQuery();
-                resultSet.next();
-                boolean isexpired = resultSet.getBoolean(1);
+                boolean isexpired=false;
+                if(resultSet.next())
+                 isexpired= resultSet.getBoolean(1);
                 resultSet.close();
                 if (isexpired) {
 //                    Mamafa anleh session ao anaty base de mitenty amny leh olona oe mila manao login vaovao
